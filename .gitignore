@@ -1,0 +1,11 @@
+config/jamie.json
+bin
+src
+pkg
+dist
+.idea
+*.iml
+intertidal
+intertidal.db
+
+*.sublime-*

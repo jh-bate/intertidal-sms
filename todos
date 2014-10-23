@@ -1,0 +1,10 @@
+## Bootstrap sms support into platform
+
+10) ability to create account via sms
+
+20) maintain logged in users token
+
+30) all data stashed using token
+
+40) integrate 2 way sms service
+ - https://telerivet.com
