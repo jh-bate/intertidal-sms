@@ -1,4 +1,4 @@
-package main
+package clients
 
 import (
 	"encoding/json"
@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/jh-bate/intertidal-sms"
 )
 
 type (
@@ -40,7 +42,7 @@ var (
 	sendMsgUrl  = base_url + "%s/messages/send"
 )
 
-func NewClient(config interface{}) *TelerivetClient {
+func NewTelerivetClient(config interface{}) *TelerivetClient {
 	return &TelerivetClient{httpClient: &http.Client{}, config: config.(TelerivetConfig)}
 }
 
@@ -75,6 +77,7 @@ func (c *TelerivetClient) Send(sms SmsContent) error {
 
 	jsonSms, _ := json.Marshal(sms)
 	req, _ := http.NewRequest("POST", url, bytes.NewBufferString(string(jsonSms)))
+	req.Header.Set("Content-Type", "application/json")
 	req.SetBasicAuth(c.config.ApiKey)
 	if resp, err := tc.httpClient.Do(req); err != nil {
 		return err

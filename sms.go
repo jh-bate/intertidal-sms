@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jh-bate/intertidal/backend/platform"
+	"github.com/jh-bate/intertidal/backend/store"
 	"github.com/jh-bate/intertidal/flood"
-	"github.com/jh-bate/intertidal/platform"
-	"github.com/jh-bate/intertidal/store"
 )
 
 const (
@@ -29,16 +29,15 @@ const (
 )
 
 type (
-	SmsClient interface {
+	SmsApi interface {
 		Load(userId string) (msgs []*Sms, err error)
 		Send(sms SmsContent) error
 	}
 	Client struct {
-		config    Config
-		Messages  []interface{}
+		Messages  []*Sms
 		raw       []TextData
 		processed []interface{}
-		api       ApiClient
+		api       SmsApi
 	}
 	TextData struct {
 		text, date, device string
@@ -60,12 +59,7 @@ func newTextData(text, date, device string) TextData {
 	}
 }
 
-func (c *Client) Init(config interface{}) *Client {
-	c.config = config.(Config)
-	return c
-}
-
-func (c *Client) AttachApi(api ApiClient) *Client {
+func (c *Client) AttachApi(api SmsApi) *Client {
 	c.api = api
 	return c
 }
@@ -73,6 +67,8 @@ func (c *Client) AttachApi(api ApiClient) *Client {
 func (c *Client) Load() *Client {
 
 	log.Println("loading sms messages")
+
+	c.Messages, _ = c.api.Load("123")
 
 	for i := range c.Messages {
 		msg := messages.Messages[i]

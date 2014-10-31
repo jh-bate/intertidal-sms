@@ -1,12 +1,10 @@
-Intertidal
+Intertidal-Sms
 ==========
 
-Where data flows in and out of the platform
+Where sms data flows in and out of the platform
 
 ## setup
 
 export GOPATH=your_go_path
 
-go run cmd/load.go -s=trackthis -t=auth_token
-
-go run cmd/load.go -s=twilio -t=auth_token
+go run main.go -k=telerivet_api_key -p=project_id

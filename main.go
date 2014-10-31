@@ -4,14 +4,19 @@ import (
 	"flag"
 	"log"
 
+	"github.com/jh-bate/intertidal-sms/clients"
 	"github.com/jh-bate/intertidal/backend/platform"
 	"github.com/jh-bate/intertidal/backend/store"
 )
 
-func loadFromSms(token string, stash *store.BoltClient) {
-	log.Println("load from trackthis")
+func loadFromSms(key, projectId string, stash *store.BoltClient) {
+	log.Println("load from sms")
 
-	tt := trackthis.NewClient()
+	tr := clients.NewTelerivetClient(clients.TelerivetConfig{ApiKey: key, ProjectId: projectId})
+
+	sms := NewClient().
+		AttachApi(api)
+
 	p := platform.NewClient(
 		&platform.Config{
 			Auth:   "https://staging-api.tidepool.io/auth",
@@ -23,20 +28,17 @@ func loadFromSms(token string, stash *store.BoltClient) {
 
 	p.StashUserLocal(stash)
 
-	tt.Init(trackthis.Config{AuthToken: token}).
-		Load().
-		StorePlatform(p).
-		StashLocal(p.User.Token, stash)
+	sms.Load().StorePlatform(p)
 }
 
 func main() {
 
-	authPtr := flag.String("t", "", "auth token for source")
-	//destPtr := flag.String("d", "stash", "where the data will be put")
+	key := flag.String("k", "", "api key")
+	projId := flag.String("p", "", "projectId")
 
 	flag.Parse()
 
 	stash := store.NewBoltClient()
 
-	loadFromSms(*authPtr, stash)
+	loadFromSms(*key, *projId, stash)
 }
